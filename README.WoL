@@ -3,6 +3,12 @@
 
 ------------------------------------------------------------------->8=======
 
+root@ikarus:/etc/init.d# cat /etc/init.d/S98wol_proxy
+/root/udp-broadcast-relay -f 1 7 eth2 vlan0
+/root/udp-broadcast-relay -f 2 9 eth2 vlan0
+
+=======8<-------------------------------------------------------------------
+
 https://marvin.im/wake-on-lan/
 
 MENU
