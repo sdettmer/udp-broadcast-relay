@@ -1,0 +1,92 @@
+./udp-broadcast-relay -f 1 7 eth2 vlan0
+./udp-broadcast-relay -f 2 9 eth2 vlan0
+
+------------------------------------------------------------------->8=======
+
+https://marvin.im/wake-on-lan/
+
+MENU
+Home
+English
+Deutsch
+Impressum
+SUBSCRIBE
+MENU
+Wake On LAN / WAN over different Subnets OpenWRT (or other
+Routers)
+18 MARCH 2015 on English, Networking, Linux
+Hey there,
+you might have found several Tutorials about how to configure
+Wake On WAN or WAN.
+
+Unfortunatly most of them lack of a good description how to get
+it work over a router.
+
+In my case I'm using a OpenWRT Router which I want to use to Wake
+my LAN PCs from the WAN side of my Network. Well after this
+tutorial you should be able to achieve this goal with any router
+;)
+
+First of all, there are some Tutorials out there who consider to
+use a special unused IP Address and some static changes in your
+ARP-Table. 
+I wouldn't consider this as an clean solution, messing around
+with ARP-Entries seems more like a fast hack. So this is the more
+clean and easy way.
+
+Okay let's start.
+Wake On ... uses magic packages which are UDP-Broadcast-Packages
+send on port 7 or port 9.
+
+Unfortunatly for our case, Broadcast UDP Packages won't get
+routed into other Networks. This is way we can't wake up PCs from
+different Networks by default and without using a proxy or remote
+agent inside of these networks.
+
+But there is hope, for many Linux/Unix and Router Distrubutions
+you'll be able to find the program udp-broadcast-relay which
+simply listens to a specified port on a specified interface and
+forwards all incoming UPD-broadcast-Packages to a different
+interface.
+
+Keep in mind that this may need a firewall rule to allow traffic
+for the incoming or outcoming interface , port and protocol.
+
+Example
+let's say you want to send magic packages from the WAN Network of
+you OpenWRT Router into your LAN. It works by default the other
+way around to, so you'll be able to Wake Computers in your WAN
+Network to - unless you block it with the OpenWRT Firewall
+
+udp-broadcast-relay -f 1 7 eth0.2 br-lan
+Explanation: 
+udp-broadcast-relay the name of the program 
+-f run as daemon (fork to background) 
+1 a unique id of the relay (I allways count this up for every
+relay) 
+7 the port to listen to 
+eth0.2 the WAN Interface 
+br-lan the LAN Interface
+
+For OpenWRT you could just add two lines (for each port one line
+7 & 9) to your startup script (/etc/rc.local or System/Startup)
+like this:
+
+udp-broadcast-relay -f 1 7 ethX ethY
+udp-broadcast-relay -f 2 9 ethX ethY
+If one of these interfaces is firewalled like the WAN interface
+is, you need a Accept rule for the two ports
+(Network/Firewall/Traffic Rules/Open ports on router):
+
+ACCEPT UDP Traffic (on Interface WAN) on PORT 7
+ACCEPT UDP Traffic (on Interface WAN) on PORT 9
+That's all
+I hope you found this helpful
+
+Marvin
+Read more posts by this author.
+
+Munich, Germany
+Share this post
+  
+  marvin.im  2015Proudly published with Ghost
